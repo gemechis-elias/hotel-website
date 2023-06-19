@@ -1,0 +1,37 @@
+[27-Nov-2022 12:16:27 Europe/London] PHP Warning:  mysqli::__construct(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 56
+[27-Nov-2022 12:16:27 Europe/London] PHP Notice:  Problem with connecting to database. in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 59
+[27-Nov-2022 12:16:27 Europe/London] PHP Warning:  mysqli::set_charset(): Couldn't fetch mysqli in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 62
+[27-Nov-2022 12:16:27 Europe/London] PHP Warning:  mysqli::prepare(): Couldn't fetch mysqli in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 94
+[27-Nov-2022 12:16:27 Europe/London] PHP Warning:  call_user_func_array() expects parameter 1 to be a valid callback, first array member is not a valid class name or object in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 165
+[27-Nov-2022 12:16:27 Europe/London] PHP Fatal error:  Uncaught Error: Call to a member function execute() on bool in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php:100
+Stack trace:
+#0 /home/gujisoft/gdsc-aastu/admin/Model/Member.php(118): Phppot\DataSource->select('SELECT * FROM a...', 's', Array)
+#1 /home/gujisoft/gdsc-aastu/admin/Model/Member.php(129): Phppot\Member->getMember('admin')
+#2 /home/gujisoft/gdsc-aastu/admin/login.php(7): Phppot\Member->loginMember()
+#3 /home/gujisoft/gdsc-aastu/admin/my-website.php(2): require_once('/home/gujisoft/...')
+#4 {main}
+  thrown in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 100
+[27-Nov-2022 12:19:23 Europe/London] PHP Warning:  mysqli::__construct(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 56
+[27-Nov-2022 12:19:23 Europe/London] PHP Notice:  Problem with connecting to database. in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 59
+[27-Nov-2022 12:19:23 Europe/London] PHP Warning:  mysqli::set_charset(): Couldn't fetch mysqli in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 62
+[27-Nov-2022 12:19:23 Europe/London] PHP Warning:  mysqli::prepare(): Couldn't fetch mysqli in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 94
+[27-Nov-2022 12:19:23 Europe/London] PHP Warning:  call_user_func_array() expects parameter 1 to be a valid callback, first array member is not a valid class name or object in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 165
+[27-Nov-2022 12:19:23 Europe/London] PHP Fatal error:  Uncaught Error: Call to a member function execute() on bool in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php:100
+Stack trace:
+#0 /home/gujisoft/gdsc-aastu/admin/Model/Member.php(118): Phppot\DataSource->select('SELECT * FROM a...', 's', Array)
+#1 /home/gujisoft/gdsc-aastu/admin/Model/Member.php(129): Phppot\Member->getMember('admin')
+#2 /home/gujisoft/gdsc-aastu/admin/login.php(7): Phppot\Member->loginMember()
+#3 /home/gujisoft/gdsc-aastu/admin/my-website.php(2): require_once('/home/gujisoft/...')
+#4 {main}
+  thrown in /home/gujisoft/gdsc-aastu/admin/lib/DataSource.php on line 100
+[14-Dec-2022 21:30:41 Europe/London] PHP Warning:  extract() expects parameter 1 to be array, bool given in /home/gujisoft/public_html/draft/kontoma-darimu/admin/view-detail.php on line 13
+[15-Dec-2022 08:19:43 Europe/London] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'gujisoft_horan.annnouncement' doesn't exist in /home/gujisoft/public_html/draft/kontoma-darimu/admin/add_announcement.php:32
+Stack trace:
+#0 /home/gujisoft/public_html/draft/kontoma-darimu/admin/add_announcement.php(32): PDOStatement->execute()
+#1 {main}
+  thrown in /home/gujisoft/public_html/draft/kontoma-darimu/admin/add_announcement.php on line 32
+[15-Dec-2022 08:20:34 Europe/London] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'gujisoft_horan.annnouncement' doesn't exist in /home/gujisoft/public_html/draft/kontoma-darimu/admin/add_announcement.php:32
+Stack trace:
+#0 /home/gujisoft/public_html/draft/kontoma-darimu/admin/add_announcement.php(32): PDOStatement->execute()
+#1 {main}
+  thrown in /home/gujisoft/public_html/draft/kontoma-darimu/admin/add_announcement.php on line 32
