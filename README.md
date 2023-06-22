@@ -1,8 +1,8 @@
 # Marefiya - Full Hotel Website
 
-![Home Page Screenshot](screenshots/Screenshot 2023-06-22 230414.png)
+![Home Page Screenshot](screenshots/home.png)
 
-This project is a Simple Hotel Website with Fully Functional Hotel Managment Admin Portal.The website is implemented using pure PHP object-oriented programming and HTML, CSS, and JS.
+This project is a Simple Hotel Website with a Fully Functional Hotel Management Admin Portal. The website is implemented using pure PHP object-oriented programming and HTML, CSS, and JS.
 
 ## Team Members
 
@@ -12,7 +12,7 @@ This project is a Simple Hotel Website with Fully Functional Hotel Managment Adm
 - Etsubdink Hayelom
 - Firkresilase
 
-![Admin Page Screenshot](screenshots/Screenshot 2023-06-22 230330.png)
+![Admin Page Screenshot](screenshots/login.png)
 
 ## Technologies Used
 
