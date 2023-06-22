@@ -201,11 +201,11 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <tbody>
                 <?php foreach ($events as $event): ?>
                     <tr>
-                        <td><img src="upload/<?php echo $evnt['image']; ?>" width="50" height="50" alt="Room Image"></td>
+                        <td><img src="upload/<?php echo $event['image']; ?>" width="50" height="50" alt="Room Image"></td>
                         <td><?php echo $event['title']; ?></td>
                       
                         <td> 
-                                <a href="add_rooms.php?room_id=<?php echo $evnt['id']; ?>" ><button type="submit" class="btn btn-danger btn-sm">Delete</button></a>
+                                <a href="add_rooms.php?room_id=<?php echo $event['id']; ?>" ><button type="submit" class="btn btn-danger btn-sm">Delete</button></a>
                           
                         </td>
                     </tr>
