@@ -1,73 +1,70 @@
 <?php
-require_once "connection.php";
+require_once "connection/connection.php";
+
 session_start();
-if (isset($_SESSION["username"])) {
+if (isset($_SESSION["admin_id"])) {
     $username = $_SESSION["username"];
     session_write_close();
 } else {
-    // since the username is not set in session, the user is not-logged-in
-    // he is trying to access this page unauthorized
-    // so let's clear all session variables and redirect him to index
     session_unset();
     session_write_close();
     $url = "./login.php";
     header("Location: $url");
 }
 
-	
-// Add new room to the database
+// Add new event to the database
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
     $title = $_POST['title'];
+    $description = $_POST['description'];
     $image = $_FILES['image']['name'];
-    $type = $_POST['type'];
-    $amount = $_POST['amount'];
-
+    $date = date('Y-m-d');
     // Upload image file
     $targetDir = 'upload/';
     $targetFile = $targetDir . basename($_FILES['image']['name']);
     move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
 
-    // Insert room data into the database
-    $stmt = $db->prepare("INSERT INTO rooms (title, image, type, amount) VALUES (:title, :image, :type, :amount)");
+    // Insert event data into the database
+    $stmt = $db->prepare("INSERT INTO events (title, description, date, image) VALUES (:title, :description, :date, :image)");
     $stmt->bindParam(':title', $title);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':date', $date);
     $stmt->bindParam(':image', $image);
-    $stmt->bindParam(':type', $type);
-    $stmt->bindParam(':amount', $amount);
     $stmt->execute();
 
-    // Redirect to the room list page
-    header('Location:add_rooms.php');
+    // Redirect to the event list page
+    header('Location: add_event.php');
     exit();
 }
-if (isset($_REQUEST['room_id'])) {
-    $roomId = $_REQUEST['room_id'];
 
-    // Retrieve the room details before deletion
-    $stmt = $db->prepare("SELECT title, image FROM rooms WHERE id = :id");
-    $stmt->bindParam(':id', $roomId);
+if (isset($_REQUEST['event_id'])) {
+    $eventId = $_REQUEST['event_id'];
+
+    // Retrieve the event details before deletion
+    $stmt = $db->prepare("SELECT title, image FROM events WHERE id = :id");
+    $stmt->bindParam(':id', $eventId);
     $stmt->execute();
-    $roomData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $eventData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Delete the room from the database
-    $stmt = $db->prepare("DELETE FROM rooms WHERE id = :id");
-    $stmt->bindParam(':id', $roomId);
+    // Delete the event from the database
+    $stmt = $db->prepare("DELETE FROM events WHERE id = :id");
+    $stmt->bindParam(':id', $eventId);
     $stmt->execute();
 
     // Delete the associated image file
-    $imageFile = 'uploads/' . $roomData['image'];
+    $imageFile = 'upload/' . $eventData['image'];
     if (file_exists($imageFile)) {
         unlink($imageFile);
     }
-
-    // Redirect to the room list page
-    header('Location: add_rooms.php');
+    header('Location: add_event.php');
     exit();
 }
-// Fetch all rooms from the database
-$stmt = $db->query("SELECT * FROM rooms");
-$rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);	
+
+// Fetch all events from the database
+$stmt = $db->query("SELECT * FROM events");
+$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,7 +72,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport"> 
 
-    <title>Post Room - MAREFIYA</title>
+    <title>Post Event - MAREFIYA</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -93,30 +90,8 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
     <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
     <link href="../assets/css/style.css" rel="stylesheet">
-    <!-- Theme included stylesheets -->
-    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
-
-    <!-- Core build with no theme, formatting, non-essential modules -->
-    <link href="//cdn.quilljs.com/1.3.6/quill.core.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js" rel="stylesheet">
-
-        <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
-    <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
-
-    <!-- Theme included stylesheets -->
-    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
-
-    <!-- Core build with no theme, formatting, non-essential modules -->
-    <link href="//cdn.quilljs.com/1.3.6/quill.core.css" rel="stylesheet">
-    <script src="//cdn.quilljs.com/1.3.6/quill.core.js"></script>
+   
     <style>
         @import url("https://fonts.googleapis.com/css?family=Montserrat:700,500,800");
         @font-face {
@@ -136,8 +111,6 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-
-    <!-- ======= Header ======= -->
     <header id="header" class="fixed-top header-inner-pages">
         <div class="container d-flex align-items-center justify-content-between">
             <h1 style="font-size:23px;" class="logo">
@@ -153,17 +126,10 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
             </nav>
-            <!-- .navbar -->
 
         </div>
     </header>
-    <!-- End Header -->
-    
-    <!-- ======= Hero Section ======= -->
-    <!-- End Hero -->
     <main id="main">
-
-        <!-- ======= Breadcrumbs ======= -->
         <section style="margin-top:80px;" class="breadcrumbs">
             <div class="container">
 
@@ -171,13 +137,12 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <h2></h2>
                     <ol>
                         <li><a href="index.php">Home</a></li>
-                        <li>forms</li>
+                        <li>events</li>
                     </ol>
                 </div>
 
             </div>
         </section>
-        <!-- End Breadcrumbs -->
 
         <section id="contact" class="contact sections-bg">
          <br><br>
@@ -205,49 +170,42 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="container mt-4">
-        <h2>Add New Room</h2>
+        <h2>Create New Event</h2>
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">Title:</label>
                 <input type="text" class="form-control" name="title" required>
             </div>
+            <!--- Description textarea -->
+            <div class="form-group">
+                <label for="description">Description:</label><br>
+                <textarea rows="4"ccols="10" id="description" name="description"></textarea>
+            </div>
             <div class="form-group">
                 <label for="image">Image:</label>
                 <input type="file" class="form-control" name="image" required>
             </div>
-            <div class="form-group">
-                <label for="type">Type:</label>
-                <select class="form-control" name="type" required>
-                    <option value="single">Single</option>
-                    <option value="double">Double</option>
-                    <option value="VIP">VIP</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="amount">Amount:</label>
-                <input type="number" class="form-control" name="amount" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Room</button>
+        <br>
+            <button type="submit" class="btn btn-primary">Add Event</button>
         </form>
 
-        <h2 class="mt-4">Room List</h2>
+        <h2 class="mt-4">Event List</h2>
         <table class="table">
             <thead>
                 <tr>
                     <th>Image</th>
                     <th>Title</th>
-                    <th>Type</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($rooms as $room): ?>
+                <?php foreach ($events as $event): ?>
                     <tr>
-                        <td><img src="upload/<?php echo $room['image']; ?>" width="50" height="50" alt="Room Image"></td>
-                        <td><?php echo $room['title']; ?></td>
-                        <td><?php echo $room['type']; ?></td>
+                        <td><img src="upload/<?php echo $evnt['image']; ?>" width="50" height="50" alt="Room Image"></td>
+                        <td><?php echo $event['title']; ?></td>
+                      
                         <td> 
-                                <a href="add_rooms.php?room_id=<?php echo $room['id']; ?>" ><button type="submit" class="btn btn-danger btn-sm">Delete</button></a>
+                                <a href="add_rooms.php?room_id=<?php echo $evnt['id']; ?>" ><button type="submit" class="btn btn-danger btn-sm">Delete</button></a>
                           
                         </td>
                     </tr>
@@ -262,10 +220,6 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </section>
 
     </main>
-    <!-- End #main -->
-
-    <!-- ======= Footer ======= -->
-    <!-- End #main -->  <!-- ======= Footer ======= -->
     <footer id="footer">
         <div class="footer-top">
             <div class="container">
@@ -317,14 +271,15 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             </div>
         </div>
-    </footer>  <div id="preloader"></div>
+    </footer>  
+    
     <link rel="stylesheet" href="assets/vendors/simple-datatables/style.css">
-<script src="assets/vendors/simple-datatables/simple-datatables.js"></script>
-<script>
-    // Simple Datatable
-    let table1 = document.querySelector('#table1');
-    let dataTable = new simpleDatatables.DataTable(table1);
-</script>
+    <script src="assets/vendors/simple-datatables/simple-datatables.js"></script>
+    <script>
+        // Simple Datatable
+        let table1 = document.querySelector('#table1');
+        let dataTable = new simpleDatatables.DataTable(table1);
+    </script>
     <!-- Vendor JS Files -->
     <script src="../assets/vendor/purecounter/purecounter.js"></script>
     <script src="../assets/vendor/aos/aos.js"></script>
@@ -333,8 +288,6 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="../assets/vendor/php-email-form/validate.js"></script>
-
-    <!-- Template Main JS File -->
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/quill.min.js"></script>
     <script>

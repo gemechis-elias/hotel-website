@@ -1,6 +1,6 @@
 <?php
 
-require_once "connection.php";
+require_once "connection/connection.php";
 session_start();
 
 // Check if the admin session does not exist
@@ -9,76 +9,10 @@ if (!isset($_SESSION['admin_id'])) {
     session_unset();
     session_write_close();
     exit();
-}
+} 
 // disable error reporting
 error_reporting(0);
-// Function to get the current date and time
-function getCurrentDateTime() {
-    return date('Y-m-d H:i:s');
-}
-
-// Function to get the current date (without time)
-function getCurrentDate() {
-    return date('Y-m-d');
-}
-
-// Function to get the first and last day of the previous month
-function getPreviousMonthRange() {
-    $firstDay = date('Y-m-01', strtotime('last month'));
-    $lastDay = date('Y-m-t', strtotime('last month'));
-    return array($firstDay, $lastDay);
-}
-
-// Function to update the views table
-function updateViews() {
-    global $db;
-
-    // Get the current date and time
-    $currentDateTime = getCurrentDateTime();
-    $currentDate = getCurrentDate();
-
-    // Check if a row exists for today's date in the views table
-    $stmt = $db->prepare("SELECT * FROM views WHERE date = :date");
-    $stmt->bindParam(':date', $currentDate);
-    $stmt->execute();
-
-    // If a row exists, update the today_view count
-    if ($stmt->rowCount() > 0) {
-        $stmt = $db->prepare("UPDATE views SET today_view = today_view + 1, last_updated = :datetime WHERE date = :date");
-        $stmt->bindParam(':datetime', $currentDateTime);
-        $stmt->bindParam(':date', $currentDate);
-        $stmt->execute();
-    } else { // If no row exists, insert a new row with today's date and set today_view to 1
-        $stmt = $db->prepare("INSERT INTO views (date, today_view, last_updated) VALUES (:date, 1, :datetime)");
-        $stmt->bindParam(':date', $currentDate);
-        $stmt->bindParam(':datetime', $currentDateTime);
-        $stmt->execute();
-    }
-
-    // Check if a row exists for the previous month in the views table
-    list($firstDay, $lastDay) = getPreviousMonthRange();
-    $stmt = $db->prepare("SELECT * FROM views WHERE date >= :firstday AND date <= :lastday");
-    $stmt->bindParam(':firstday', $firstDay);
-    $stmt->bindParam(':lastday', $lastDay);
-    $stmt->execute();
-
-    // If a row exists, update the last_month count
-    if ($stmt->rowCount() > 0) {
-        $stmt = $db->prepare("UPDATE views SET last_month = last_month + 1, last_updated = :datetime WHERE date >= :firstday AND date <= :lastday");
-        $stmt->bindParam(':datetime', $currentDateTime);
-        $stmt->bindParam(':firstday', $firstDay);
-        $stmt->bindParam(':lastday', $lastDay);
-        $stmt->execute();
-    } else { // If no row exists, insert a new row with the previous month's range and set last_month to 1
-        $stmt = $db->prepare("INSERT INTO views (date, last_month, last_updated) VALUES (:date, 1, :datetime)");
-        $stmt->bindParam(':date', $firstDay);
-        $stmt->bindParam(':datetime', $currentDateTime);
-        $stmt->execute();
-    }
-}
-
-// Update the views count
-updateViews();
+include '../includes/viewers.php';
 
 // Fetch the views data from the database
 $stmt = $db->prepare("SELECT today_view, last_month FROM views WHERE date = :date");
@@ -90,8 +24,6 @@ $viewData = $stmt->fetch(PDO::FETCH_ASSOC);
 $todayViews = $viewData['today_view'] ?? 0;
 $lastMonthViews = $viewData['last_month'] ?? 0;
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -326,122 +258,122 @@ $lastMonthViews = $viewData['last_month'] ?? 0;
     <script src="assets/js/main.js"></script>
 
     <script>
-    var optionsProfileVisit = {
-	annotations: {
-		position: 'back'
-	},
-	dataLabels: {
-		enabled:false
-	},
-	chart: {
-		type: 'bar',
-		height: 300
-	},
-	fill: {
-		opacity:1
-	},
-	plotOptions: {
-	},
-	series: [{
-		name: 'Visit',
-		data: [9,20,30,20,10,20,30,20,10,20,30,20]
-	}],
-	colors: '#435ebe',
-	xaxis: {
-		categories: ["Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug","Sep","Oct","Nov","Dec"],
-	},
-}
-let optionsVisitorsProfile  = {
-	series: [60, 40],
-	labels: ['Male', 'Female'],
-	colors: ['#435ebe','#55c6e8'],
-	chart: {
-		type: 'donut',
-		width: '100%',
-		height:'350px'
-	},
-	legend: {
-		position: 'bottom'
-	},
-	plotOptions: {
-		pie: {
-			donut: {
-				size: '30%'
-			}
-		}
-	}
-}
+            var optionsProfileVisit = {
+            annotations: {
+                position: 'back'
+            },
+            dataLabels: {
+                enabled:false
+            },
+            chart: {
+                type: 'bar',
+                height: 300
+            },
+            fill: {
+                opacity:1
+            },
+            plotOptions: {
+            },
+            series: [{
+                name: 'Visit',
+                data: [9,20,30,20,10,20,30,20,10,20,30,20]
+            }],
+            colors: '#435ebe',
+            xaxis: {
+                categories: ["Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug","Sep","Oct","Nov","Dec"],
+            },
+        }
+        let optionsVisitorsProfile  = {
+            series: [60, 40],
+            labels: ['Male', 'Female'],
+            colors: ['#435ebe','#55c6e8'],
+            chart: {
+                type: 'donut',
+                width: '100%',
+                height:'350px'
+            },
+            legend: {
+                position: 'bottom'
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '30%'
+                    }
+                }
+            }
+        }
 
-var optionsEurope = {
-	series: [{
-		name: 'Visit',
-		data: [310, 800, 600, 430, 540, 340, 605, 805,430, 540, 340, 605]
-	}],
-	chart: {
-		height: 80,
-		type: 'area',
-		toolbar: {
-			show:false,
-		},
-	},
-	colors: ['#5350e9'],
-	stroke: {
-		width: 2,
-	},
-	grid: {
-		show:false,
-	},
-	dataLabels: {
-		enabled: false
-	},
-	xaxis: {
-		type: 'datetime',
-		categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z","2018-09-19T07:30:00.000Z","2018-09-19T08:30:00.000Z","2018-09-19T09:30:00.000Z","2018-09-19T10:30:00.000Z","2018-09-19T11:30:00.000Z"],
-		axisBorder: {
-			show:false
-		},
-		axisTicks: {
-			show:false
-		},
-		labels: {
-			show:false,
-		}
-	},
-	show:false,
-	yaxis: {
-		labels: {
-			show:false,
-		},
-	},
-	tooltip: {
-		x: {
-			format: 'dd/MM/yy HH:mm'
-		},
-	},
-};
+        var optionsEurope = {
+            series: [{
+                name: 'Visit',
+                data: [310, 800, 600, 430, 540, 340, 605, 805,430, 540, 340, 605]
+            }],
+            chart: {
+                height: 80,
+                type: 'area',
+                toolbar: {
+                    show:false,
+                },
+            },
+            colors: ['#5350e9'],
+            stroke: {
+                width: 2,
+            },
+            grid: {
+                show:false,
+            },
+            dataLabels: {
+                enabled: false
+            },
+            xaxis: {
+                type: 'datetime',
+                categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z","2018-09-19T07:30:00.000Z","2018-09-19T08:30:00.000Z","2018-09-19T09:30:00.000Z","2018-09-19T10:30:00.000Z","2018-09-19T11:30:00.000Z"],
+                axisBorder: {
+                    show:false
+                },
+                axisTicks: {
+                    show:false
+                },
+                labels: {
+                    show:false,
+                }
+            },
+            show:false,
+            yaxis: {
+                labels: {
+                    show:false,
+                },
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy HH:mm'
+                },
+            },
+        };
 
-let optionsAmerica = {
-	...optionsEurope,
-	colors: ['#008b75'],
-}
-let optionsIndonesia = {
-	...optionsEurope,
-	colors: ['#dc3545'],
-}
+        let optionsAmerica = {
+            ...optionsEurope,
+            colors: ['#008b75'],
+        }
+        let optionsIndonesia = {
+            ...optionsEurope,
+            colors: ['#dc3545'],
+        }
 
 
 
-var chartProfileVisit = new ApexCharts(document.querySelector("#chart-profile-visit"), optionsProfileVisit);
-var chartVisitorsProfile = new ApexCharts(document.getElementById('chart-visitors-profile'), optionsVisitorsProfile)
-var chartEurope = new ApexCharts(document.querySelector("#chart-europe"), optionsEurope);
-var chartAmerica = new ApexCharts(document.querySelector("#chart-america"), optionsAmerica);
-var chartIndonesia = new ApexCharts(document.querySelector("#chart-indonesia"), optionsIndonesia);
+        var chartProfileVisit = new ApexCharts(document.querySelector("#chart-profile-visit"), optionsProfileVisit);
+        var chartVisitorsProfile = new ApexCharts(document.getElementById('chart-visitors-profile'), optionsVisitorsProfile)
+        var chartEurope = new ApexCharts(document.querySelector("#chart-europe"), optionsEurope);
+        var chartAmerica = new ApexCharts(document.querySelector("#chart-america"), optionsAmerica);
+        var chartIndonesia = new ApexCharts(document.querySelector("#chart-indonesia"), optionsIndonesia);
 
-chartIndonesia.render();
-chartAmerica.render();
-chartEurope.render();
-chartProfileVisit.render();
-chartVisitorsProfile.render()
+        chartIndonesia.render();
+        chartAmerica.render();
+        chartEurope.render();
+        chartProfileVisit.render();
+        chartVisitorsProfile.render()
 </script>
 </body>
 

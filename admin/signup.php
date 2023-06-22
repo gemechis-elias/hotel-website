@@ -1,5 +1,5 @@
 <?php
-require_once 'connection.php'; // Include the connection.php file
+require_once 'connection/connection.php'; // Include the connection.php file
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];

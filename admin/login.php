@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once 'connection.php'; // Include the connection.php file
+require_once 'connection/connection.php'; // Include the connection.php file
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['uname'];
@@ -20,6 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Set session variables
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_name'] = $admin['name'];
+            // username
+            $_SESSION['username'] = $admin['username'];
+
+            session_write_close();
 
             // Redirect to index.php after successful login
             header("Location: index.php");
@@ -29,41 +33,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // If login fails, display an error message
     echo "Invalid username or password";
-}
+} 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <head>
+        <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Marefiya Hotel</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+    <title>Login</title>
+     <link rel="stylesheet" href="assets/css/login.css"> 
+    </head>
+<body>
+    <div class="wrapper">
 
-<body class="page">
-    <main class="main page__main">
-        <form class="login-form main__login-form" action="login.php" method="POST">
-            <h3 class="login-form__title">Sign In</h3>
-            <label class="login-form__label" for="uname">
-                <span class="sr-only">Username</span>
-                <input class="login-form__input" id="uname" type="text" name="uname" placeholder="Username"
-                    required="required" />
-            </label>
-            <label class="login-form__label" for="psw">
-                <span class="sr-only">Password</span>
-                <input class="login-form__input" id="psw" type="password" name="psw" placeholder="Password"
-                    required="required" />
-            </label>
-            <button class="primary-btn" type="submit">Login</button>
-            <div class="login-form__footer">
-                <a class="login-form__link" href="#">Forget Password?</a>
-                <a class="login-form__link" href="signup.php">Sign Up</a>
-            </div>
-        </form>
-    </main>
+        <div class="sct brand"><h3>Marefiya Hotel</h3><br>
+    </div>
+        <div class="sct login">
+            <form action="login.php" method="POST">
+                <h3>Admin Login</h3>
+                <input type="text" name="uname" placeholder="username">
+                <input type="password" name="psw" placeholder="Password">
+                <div class="forgot-remember">
+                        <label class="control control-checkbox">
+                                Remember me
+                                    <input type="checkbox" />
+                                <div class="control_indicator"></div>
+                            </label>
+                    <div class="forgot">
+                            <a href="#">Forgot Password?</a>
+                    </div> 
+                </div>
+                <input type="submit" name="Login" value="Login">
+               
+            </form>
+        </div>  
+    </div> 
 </body>
-
 </html>

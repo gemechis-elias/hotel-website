@@ -5,4 +5,5 @@ session_unset();
 session_write_close();
 $url = "./my-website.php";
 header("Location: $url");
+
 ?>

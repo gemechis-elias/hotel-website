@@ -1,14 +1,12 @@
 <?php
 error_reporting(0); 
-require_once "connection.php";
+require_once "connection/connection.php";
+
 session_start();
 if (isset($_SESSION["admin_id"])) {
     $username = $_SESSION["username"];
     session_write_close();
 } else {
-    // since the username is not set in session, the user is not-logged-in
-    // he is trying to access this page unauthorized
-    // so let's clear all session variables and redirect him to index
     session_unset();
     session_write_close();
     $url = "./login.php";
@@ -106,15 +104,11 @@ if(isset($_REQUEST['delete_id']))
 </head>
 
 <body>
-
-    <!-- ======= Header ======= -->
     <header id="header" class="fixed-top header-inner-pages">
         <div class="container d-flex align-items-center justify-content-between">
             <h1 style="font-size:23px;" class="logo">
                 <a href="index.php">MAREFIYA HOTEL ADMIN</a>
             </h1>
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
             <nav id="navbar" class="navbar">
                 <ul >
@@ -128,13 +122,7 @@ if(isset($_REQUEST['delete_id']))
             </nav>
         </div>
     </header>
-    <!-- End Header -->
-    
-    <!-- ======= Hero Section ======= -->
-    <!-- End Hero -->
     <main id="main">
-
-        <!-- ======= Breadcrumbs ======= -->
         <section style="margin-top:80px;" class="breadcrumbs">
             <div class="container">
 
@@ -148,7 +136,6 @@ if(isset($_REQUEST['delete_id']))
 
             </div>
         </section>
-        <!-- End Breadcrumbs -->
 
         <section id="contact" class="contact sections-bg">
         <div   class="container"> 
@@ -165,8 +152,7 @@ if(isset($_REQUEST['delete_id']))
                 </tr>
             </thead>
             <tbody>
-                <?php
-                require_once 'connection.php'; // Include the connection.php file
+                <?php 
 
                 // Fetch all users from the database
                 $stmt = $db->query("SELECT * FROM reservations");
@@ -189,10 +175,6 @@ if(isset($_REQUEST['delete_id']))
         </section>
 
     </main>
-    <!-- End #main -->
-
-    <!-- ======= Footer ======= -->
-    <!-- End #main -->  <!-- ======= Footer ======= -->
     <footer id="footer">
         <div class="footer-top">
             <div class="container">
@@ -248,7 +230,6 @@ if(isset($_REQUEST['delete_id']))
     <link rel="stylesheet" href="assets/vendors/simple-datatables/style.css">
 <script src="assets/vendors/simple-datatables/simple-datatables.js"></script>
 <script>
-    // Simple Datatable
     let table1 = document.querySelector('#table1');
     let dataTable = new simpleDatatables.DataTable(table1);
 </script>

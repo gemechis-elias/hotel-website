@@ -44,8 +44,21 @@
             }
             ?>
 
-            <a href="reservation.php" class="btn btn-primary">Make Another Reservation</a>
+            <a href="reservation.php" class="btn btn-primary">Make Another Reservation</a>&nbsp;
+            <a href="#" class="btn btn-primary" id="printButton">Print This Receipt</a>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    <script>
+        document.getElementById('printButton').addEventListener('click', function() {
+            var doc = new jsPDF();
+            doc.fromHTML(document.body, 15, 15, {
+                'width': 170
+            }, function() {
+                doc.save('receipt.pdf');
+            });
+        });
+    </script>
 </body>
 </html>
